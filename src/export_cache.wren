@@ -3,6 +3,7 @@ class ExportCache {
     _map = {}
     _id = 0
   }
+  variables { _map.values }
   next() { _id = _id + 1}
   name(module,klass) {
     var key = "%(module)#%(klass)"
