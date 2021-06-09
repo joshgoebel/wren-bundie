@@ -14,7 +14,7 @@ class Import {
     if (_path[0] == ".") {
         _external = true
         var code = File.read(_path)
-        _module = Module.new(code, _path)
+        _module = Module.findOrNew(code, _path)
     }
   }
   module { _module }

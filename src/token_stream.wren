@@ -22,6 +22,7 @@ class TokenStream {
   advance(n) { _cursor = _cursor + n }
   seek(fn) {
     while(!atEnd) {
+      System.print("hi")
       if (fn.call(peek())) {
         return peek()
       }
