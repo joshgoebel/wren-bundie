@@ -1,8 +1,8 @@
 import "./module" for Module
-import "./buffer" for Buffer
-import "./export_cache" for ExportCache
+import "./lib/buffer" for Buffer
+import "./lib/export_map" for ExportMap
 
-var NAME_CACHE = ExportCache.new()
+var EXPORT_MAP = ExportMap.new()
 var MODULES_ADDED = []
 
 
@@ -29,14 +29,14 @@ class Bundler {
       buffer << Bundler.new(imp.module).code << "\n"
       // actual exports from our block to the global space
       imp.classes.keys.each { |klass|
-        buffer << NAME_CACHE.name(imp.name, klass) << " = %(klass)\n"
+        buffer << EXPORT_MAP.name(imp.name, klass) << " = %(klass)\n"
       }
       buffer << "}\n"
     }
 
     // hook up exports
     imp.classes.keys.each { |klass|
-      buffer << "var %(imp.classes[klass]) = " << NAME_CACHE.name(imp.name, klass) << "\n"
+      buffer << "var %(imp.classes[klass]) = " << EXPORT_MAP.name(imp.name, klass) << "\n"
     }
 
     // System.print("STREAMING")

@@ -1,4 +1,4 @@
-class ExportCache {
+class ExportMap {
   construct new() {
     _map = {}
     _id = 0

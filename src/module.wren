@@ -1,4 +1,4 @@
-import "./token_stream" for TokenStream
+import "./lib/token_stream" for TokenStream
 
 var MODULES = {}
 var IMPORTS = []
