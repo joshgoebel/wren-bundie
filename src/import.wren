@@ -8,7 +8,6 @@ class Import {
     _classes = {}
     _external = null
     _module = null
-    _code = ""
 
     _path = "%(name).wren"
     if (_path[0] == ".") {
@@ -21,31 +20,31 @@ class Import {
   isExternal { _external }
   name { _name }
   classes { _classes }
-  parseStream(s) {
+  parseImportStatement(s) {
     if (s.peek().type != "for") return
     s.advance(2)
 
-    while (s.peek().type != "line") {
+    while (true) {
       var klass = s.peek().text
       var as_ = klass
       s.advance(2)
       if (s.peek().text == "as") {
-        s.advance(2)
-        as_ = s.peek()
-        s.advance()
+        as_ = s.peek(2)
+        s.advance(3)
       }
       _classes[klass] = as_
-      while (s.peek().type == "whitespace" || s.peek().type == "comma" || s.peek().type == "comment") {
-        s.advance()
-      }
+      s.advanceThru(["whitespace","comma","comment"])
+      if (s.peek().type == "line") break
     }
   }
   static fromStream(s) {
     s.advance(2)
-    var result = Import.new(s.peek().text.replace("\"",""))
-    s.advance(2)
-    result.parseStream(s)
-
+    var importName = s.peek().text.replace("\"","")
+    var result = Import.new(importName)
+    if (s.peek(2).type == "for") {
+      s.advance(2)
+      result.parseImportStatement(s)
+    }
     return result
   }
   toString {

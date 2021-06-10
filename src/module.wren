@@ -7,6 +7,7 @@ var IMPORTS = []
 
 class Module {
   static findOrNew(code, path) {
+    // System.print("findOrNew: %(path)")
     if (MODULES.containsKey(path)) return MODULES[path]
     MODULES[path] = Module.new(code,path)
     return MODULES[path]
@@ -15,13 +16,14 @@ class Module {
     _code = code
     _path = path
     _stream = TokenStream.new(code)
-    imports
+    parse()
   }
+  path { _path }
   code { _code }
   stream { _stream }
-  imports {
-
-    if (_imports != null ) return _imports
+  imports { _imports }
+  parse() {
+    stream.rewind()
     _imports = []
     while (true) {
       var imp = _stream.seek { |t| t.type == "import" }
@@ -30,7 +32,8 @@ class Module {
       _imports.add(Import.fromStream(_stream))
       _stream.advance()
     }
-    return _imports
+    // System.print(("imports end"))
+    stream.rewind()
   }
 }
 

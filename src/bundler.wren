@@ -39,22 +39,34 @@ class Bundler {
       buffer << "var %(imp.classes[klass]) = " << NAME_CACHE.name(imp.name, klass) << "\n"
     }
 
+    // System.print("STREAMING")
+    // System.print("imp %(imp)")
+    // System.print("stream %(stream.all[50..-1])")
+    // System.print("stream %(stream.cursor)")
     // skip until we find the line end
-    while(stream.peek().type != "line") stream.advance()
+    while(stream.peek().type != "line") {
+        // System.print(stream.peek())
+        if (stream.atEnd) break
+        stream.advance()
+    }
   }
   code {
+    // System.print(("start: %(_module.path)"))
     _i = 0
     var peek
     stream.rewind()
     // buffer << intro
-    while (peek = stream.peek()) {
+    while (!stream.atEnd) {
+      peek = stream.peek()
       if (peek.type == "import") {
+        // System.print(("found import at %(stream.cursor)"))
         writeImport(buffer)
       } else {
         buffer << peek.text
       }
       stream.advance()
     }
+    // System.print(("done: %(_module.path)"))
     // buffer << outro
     return buffer.toString
   }

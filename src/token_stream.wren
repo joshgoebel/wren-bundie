@@ -7,6 +7,7 @@ class TokenStream {
     _cursor = 0
     lex()
   }
+  cursor { _cursor }
   all { _tokens }
   rewind() { _cursor = 0 }
   atEnd { _cursor >= _tokens.count }
@@ -20,9 +21,12 @@ class TokenStream {
   }
   advance() { advance(1) }
   advance(n) { _cursor = _cursor + n }
+  advanceThru(list) {
+    if (list is String) list = [list]
+    while (list.contains(peek().type)) { advance() }
+  }
   seek(fn) {
     while(!atEnd) {
-      System.print("hi")
       if (fn.call(peek())) {
         return peek()
       }
@@ -35,7 +39,6 @@ class TokenStream {
       var t = l.readToken()
       if (t.type == Token.eof) return
       _tokens.add(t)
-      // System.print("%(t.type): %(t.text) ")
     }
   }
 }
