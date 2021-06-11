@@ -1,4 +1,6 @@
 // real water from liquids
 class Water {
-    static drink() {}
+    static drink() {
+        System.print("ah, so refreshing")
+    }
 }

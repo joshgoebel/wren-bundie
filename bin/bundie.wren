@@ -4,11 +4,12 @@ import "os" for Process
 import "../src/module" for Module
 import "../src/lib/buffer" for Buffer
 import "../src/bundler" for Bundler, EXPORT_MAP
+import "cli" for Path
 
-
-var path = Process.arguments[0]
-var code = File.read(path)
-var module = Module.new(code, path)
+// we do not support absolute paths
+var root = Path.new(".")
+var path = root.join(Process.arguments[0])
+var module = Module.new(path)
 
 var bundled = Bundler.new(module).code
 var out = Buffer.new()

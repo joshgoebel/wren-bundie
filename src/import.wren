@@ -2,18 +2,19 @@ import "io" for File
 import "cli" for Path
 import "./module" for Module
 
+var IsRelative = Fn.new { |p| p.toString[0] == "." }
+
 class Import {
-  construct new(name) {
+  construct new(name, opts) {
     _name = name
     _classes = {}
-    _external = null
+    _external = false
     _module = null
 
-    _path = "%(name).wren"
-    if (_path[0] == ".") {
+    _path = opts["relativeTo"].path.dirname.join("%(name).wren")
+    if (IsRelative.call(name)) {
         _external = true
-        var code = File.read(_path)
-        _module = Module.findOrNew(code, _path)
+        _module = Module.findOrNew(_path)
     }
   }
   module { _module }
@@ -37,10 +38,10 @@ class Import {
       if (s.peek().type == "line") break
     }
   }
-  static fromStream(s) {
+  static fromStream(s, containingModule) {
     s.advance(2)
     var importName = s.peek().text.replace("\"","")
-    var result = Import.new(importName)
+    var result = Import.new(importName, containingModule)
     if (s.peek(2).type == "for") {
       s.advance(2)
       result.parseImportStatement(s)

@@ -10,7 +10,7 @@ class ExportMap {
     if (_map.containsKey(key)) return _map[key]
 
     next()
-    _map[key] = "%(klass)__export__%(_id)"
+    _map[key] = "%(klass)__eXp__%(_id)__"
 
     return _map[key]
   }

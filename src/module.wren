@@ -1,19 +1,18 @@
+import "io" for File
 import "./lib/token_stream" for TokenStream
 
 var MODULES = {}
-var IMPORTS = []
-
-// TODO: normalize paths
 
 class Module {
-  static findOrNew(code, path) {
+  static findOrNew(path) {
+    path = path.toString
     // System.print("findOrNew: %(path)")
     if (MODULES.containsKey(path)) return MODULES[path]
-    MODULES[path] = Module.new(code,path)
+    MODULES[path] = Module.new(path)
     return MODULES[path]
   }
-  construct new(code, path) {
-    _code = code
+  construct new(path) {
+    _code = File.read(path.toString)
     _path = path
     _stream = TokenStream.new(code)
     parse()
@@ -29,11 +28,10 @@ class Module {
       var imp = _stream.seek { |t| t.type == "import" }
       if (imp == null) break
 
-      _imports.add(Import.fromStream(_stream))
+      _imports.add(Import.fromStream(_stream, { "relativeTo": this }))
       _stream.advance()
     }
     // System.print(("imports end"))
-    stream.rewind()
   }
 }
 
